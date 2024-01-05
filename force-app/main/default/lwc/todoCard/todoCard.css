@@ -1,0 +1,21 @@
+:host{
+    --theme-color : #7846C1;
+    --theme-color-dark: #55318a;
+}
+
+.due-date-box {
+    background-color: var(--theme-color);
+    color: #fff;
+}
+
+.selected-button {
+    --slds-c-button-icon-stateful-brand-color-background: var(--theme-color)
+}
+
+.my-custom-text {
+    color: var(--theme-color);
+}
+
+.my-custom-header {
+    color: var(--theme-color-dark);
+}

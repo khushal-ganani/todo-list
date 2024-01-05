@@ -1,0 +1,48 @@
+<template>
+  <lightning-card variant="base">
+    <template lwc:if={data}>
+      <div slot="title" class="my-custom-header">
+        <lightning-icon
+          icon-name={iconName}
+          alternative-text="Consultant"
+          class="slds-m-right_medium"
+        ></lightning-icon>
+        {cardTitle}
+      </div>
+      <div slot="actions">
+        <lightning-button-icon-stateful 
+          alternative-text="To-Do Completed"
+          icon-class=""
+          icon-name="utility:check"
+          onclick={handleCompletion}
+          selected={completedState}
+          size="small"
+          value=""
+          variant="border"
+          selected-variant="brand"
+          class='selected-button'
+        ></lightning-button-icon-stateful>
+      </div>
+      <div class="slds-var-p-around_medium">
+        <div class="slds-box slds-box_xx-small slds-var-m-bottom_small slds-text-align_center due-date-box">
+          <p>📅 Due Date: {dueDate}</p>
+        </div>
+        <p class="my-custom-text"><b>Description: </b> {description}</p>
+      </div>
+      <div slot="footer">
+        <lightning-badge label={priorityBadgeLabel} style={priorityBadgeColor}></lightning-badge>
+        <lightning-badge 
+          label={typeBadgeLabel}
+          icon-name={iconName}
+          icon-position="start"
+        ></lightning-badge>
+      </div>
+    </template>
+    <template lwc:elseif={error}>
+      <p>Sorry, Some error occured while loading the To-Do record Data</p>
+    </template>
+    <template lwc:else>
+      <p>Loading some data...</p>
+    </template>
+  </lightning-card>
+</template>
