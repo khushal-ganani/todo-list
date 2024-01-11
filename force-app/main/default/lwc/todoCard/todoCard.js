@@ -1,69 +1,48 @@
-import { LightningElement, api, wire } from 'lwc';
-import { getRecord, updateRecord } from 'lightning/uiRecordApi';
+import { LightningElement, api } from 'lwc';
+import { updateRecord } from 'lightning/uiRecordApi';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
-import TO_DO_COMPLETED_FIELD from '@salesforce/schema/To_Do__c.Completed__c';
-
-import TO_DO_NAME_FIELD from '@salesforce/schema/To_Do__c.Name';
-import TO_DO_TYPE_FIELD from '@salesforce/schema/To_Do__c.Type__c';
-import TO_DO_PRIORITY_FIELD from '@salesforce/schema/To_Do__c.Priority__c';
-import TO_DO_DUE_DATE_FIELD from '@salesforce/schema/To_Do__c.Due_Date__c';
-import TO_DO_DESCRIPTION_FIELD from '@salesforce/schema/To_Do__c.Description__c';
-
-const fields = [TO_DO_NAME_FIELD, TO_DO_COMPLETED_FIELD, TO_DO_TYPE_FIELD, TO_DO_PRIORITY_FIELD, TO_DO_DUE_DATE_FIELD, TO_DO_DESCRIPTION_FIELD];
 
 export default class TodoCard extends LightningElement {
 
-    @api recordId
-    data;
-    error;
+    // properties of todo record
+    toDoRecord;
+    recordId;
+    cardTitle;
+    dueDate;
+    description;
+    priorityBadgeLabel;
+    typeBadgeLabel;
     completedState = false;
+    priorityBadgeColor;
+    iconName;
     
-    @wire(getRecord, {recordId: '$recordId', fields})
-    toDoRecord({error, data}){
-        if(data){
-            this.data = data;
-            this.error = undefined;
-            console.log('Initial toDoRecord data: ',data);
-            this.completedState = data.fields.Completed__c.value;
-            console.log("Initial completedState: ", this.completedState);
-        } else if(error){
-            this.error = error;
-            this.data = undefined;
-            this.completedState = false;
-            console.error('error in wire record: ',error);
-        }
+    @api
+    get todo(){
+        return this.toDoRecord;
     }
 
-    @api
-    get cardTitle(){
-        return this.data.fields.Name.value;
+    set todo(value){
+        this.toDoRecord = value;
+        this.recordId = value.Id;
+        this.cardTitle = value.Name;
+        this.dueDate = this.formatDueDate(value.Due_Date__c); // Format the Due Date
+        this.description = value.Description__c;
+        this.priorityBadgeLabel = value.Priority__c;
+        this.typeBadgeLabel = value.Type__c;
+        this.completedState = value.Completed__c;
+        this.priorityBadgeColor = this.getPriorityBadgeColor(value.Priority__c);
+        this.iconName = this.getIconName(value.Type__c);
     }
 
-    @api
-    get dueDate(){
-        return this.data.fields.Due_Date__c.displayValue;
+    //* method to format due date
+    formatDueDate(dueDate) {
+        const options = { day: 'numeric', month: 'short', hour: 'numeric', minute: 'numeric', hour12: true };
+        return new Intl.DateTimeFormat('en-US', options).format(new Date(dueDate));
     }
 
-    @api
-    get description(){
-        return this.data.fields.Description__c.value;
-    }
-
-    @api
-    get priorityBadgeLabel(){
-        return this.data.fields.Priority__c.value;
-    }
-
-    @api
-    get typeBadgeLabel(){
-        return this.data.fields.Type__c.value;
-    }
-
-    @api
-    get iconName() {
-        console.log('Entered get iconName()');
-        const type = this.data && this.data.fields.Type__c.value;
-        console.log('Type in get iconName(): ', type);
+    // method to return the name of icon based on the type of to-do task
+    getIconName(value) {
+        const type = value;
         // different icons for To-Do cards with following types: Personal, Work, Academic, Health, Social, Household,
         // Hobbies, Self-Improvement, Other.
         switch (type) {
@@ -87,35 +66,49 @@ export default class TodoCard extends LightningElement {
                 return "utility:task";
             
             default:
-                console.warn('Unexpected or undefined type:', type);
+                console.warn('Unexpected or undefined todo type:', type);
                 return "utility:task"; // Default icon for unexpected types
         }
     }
 
-    @api
-    get priorityBadgeColor(){
+    /** 
+    * method to dynamically return the background and text color of the badge based on the
+    * priority of the to-do
+    */
+    getPriorityBadgeColor(value){
+        let colorBackground;
         let color;
-        const priority = this.data.fields.Priority__c.value;
+        const priority = value;
         if(priority === "High"){
-            color = 'red';
+            colorBackground = 'rgb(255, 200, 200)';
+            color = 'red'
         } else if(priority === "Medium"){
-            color = 'yellow';
+            colorBackground = 'rgb(255, 255, 181)';
+            color = 'rgb(140, 140, 0)';
         } else if(priority === "Low"){
-            color = 'green'
+            colorBackground = 'rgb(181, 255, 181)';
+            color = 'green';
         }
-        return `--slds-c-badge-color-background: ${color}`
+        return `--slds-c-badge-color-background: ${colorBackground}; --slds-c-badge-text-color: ${color};`
     }
 
+    /**
+     * method to handle the onclick button event to update the to-do records Completed__c field
+     */
     async handleCompletion(event) {
         let completed;
         console.log(event.target);
         try{
             console.log("entered handleCompletion");
-            completed = this.data.fields.Completed__c.value
+            completed = this.completedState;
             const recordInput = { fields: { Id: this.recordId, Completed__c: !completed } };
 
             const result = await updateRecord(recordInput)
             console.log("result from updateRecord(): ",result);
+
+            this.completedState = !completed;
+            console.log("completedState: ", this.completedState);
+
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Success',
@@ -124,7 +117,7 @@ export default class TodoCard extends LightningElement {
                 })
             );
         } catch(error) {
-            console.error('Error updating record: ', error);
+            console.error('Error updating record: ', error.body.message);
             this.dispatchEvent(
                 new ShowToastEvent({
                     title: 'Error',
@@ -132,11 +125,6 @@ export default class TodoCard extends LightningElement {
                     variant: 'error',
                 })
             );
-        } finally {
-            console.log("entered finally block of handleCompletion");
-            this.data.fields.Completed__c.value, this.completedState = !completed;
-            console.log("Completed value in data: ", this.data.fields.Completed__c.value);
-            console.log("completedState: ", this.completedState);
         }
     }
 }

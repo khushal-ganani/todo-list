@@ -1,19 +1,38 @@
 :host{
     --theme-color : #7846C1;
     --theme-color-dark: #55318a;
-}
+    --theme-color-light: #eee2ff;
+    --slds-c-card-height: 20rem;
+} 
 
 .due-date-box {
-    background-color: var(--theme-color);
-    color: #fff;
+    background-color: var(--theme-color-light);
+    color: var(--theme-color);
+    border: none;
 }
 
-.selected-button {
-    --slds-c-button-icon-stateful-brand-color-background: var(--theme-color)
+.type-badge {
+    --slds-c-badge-color-background: var(--theme-color-light);
+    --slds-c-badge-text-color: var(--theme-color);
+    --slds-c-badge-icon-color-foreground: var(--theme-color)
+}
+
+.due-date-badge {
+    --slds-c-badge-color-background: var(--theme-color-dark);
+    --slds-c-badge-text-color: white;
+    --slds-c-badge-icon-color-foreground: white;
+}
+
+.body {
+    min-height: 7rem;
+}
+
+.footer {
+    padding: none;
 }
 
 .my-custom-text {
-    color: var(--theme-color);
+    color: var(--theme-color-dark);
 }
 
 .my-custom-header {

@@ -1,45 +1,54 @@
 <template>
   <lightning-card variant="base">
-    <template lwc:if={data}>
-      <div slot="title" class="my-custom-header">
-        <lightning-icon
-          icon-name={iconName}
-          alternative-text="Consultant"
-          class="slds-m-right_medium"
-        ></lightning-icon>
+    <template lwc:if={todo}>
+      <div slot="title" class="my-custom-header slds-text-heading_small slds-truncate">
         {cardTitle}
       </div>
+
+      <!-- action button to mark or un-mark the to-do as completed -->
       <div slot="actions">
         <lightning-button-icon-stateful 
           alternative-text="To-Do Completed"
-          icon-class=""
           icon-name="utility:check"
           onclick={handleCompletion}
           selected={completedState}
           size="small"
-          value=""
           variant="border"
           selected-variant="brand"
           class='selected-button'
         ></lightning-button-icon-stateful>
       </div>
-      <div class="slds-var-p-around_medium">
-        <div class="slds-box slds-box_xx-small slds-var-m-bottom_small slds-text-align_center due-date-box">
-          <p>📅 Due Date: {dueDate}</p>
+
+      <!-- box to display the due date -->
+      <div class="slds-var-p-horizontal_medium body">
+        <div class="slds-box slds-box_x-small slds-var-m-bottom_small slds-text-align_center due-date-box">
+          <lightning-badge 
+              label={dueDate}
+              icon-name="utility:date_time"
+              icon-position="start"
+              class="due-date-badge"
+          ></lightning-badge>
         </div>
-        <p class="my-custom-text"><b>Description: </b> {description}</p>
+
+        <!-- description of the todo -->
+        <template lwc:if={description}>
+          <p class="my-custom-text"><b>Description: </b> {description}</p>
+        </template>
+        <template lwc:else>
+          <div class="slds-text-color_destructive slds-text-align_center"><p>❗ No description was provided for this To-Do</p></div>
+        </template>
       </div>
-      <div slot="footer">
-        <lightning-badge label={priorityBadgeLabel} style={priorityBadgeColor}></lightning-badge>
+
+      <!-- footer to display priority and type of todo using lightning-badge -->
+      <div slot="footer" class="footer">
+        <lightning-badge label={priorityBadgeLabel} style={priorityBadgeColor} class="slds-var-m-around_xx-small"></lightning-badge>
         <lightning-badge 
           label={typeBadgeLabel}
           icon-name={iconName}
           icon-position="start"
+          class="type-badge slds-var-m-around_xx-small"
         ></lightning-badge>
       </div>
-    </template>
-    <template lwc:elseif={error}>
-      <p>Sorry, Some error occured while loading the To-Do record Data</p>
     </template>
     <template lwc:else>
       <p>Loading some data...</p>
