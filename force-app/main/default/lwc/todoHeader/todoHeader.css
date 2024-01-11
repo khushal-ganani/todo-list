@@ -10,13 +10,16 @@
     font-size: 4rem;
     font-weight: 600;
 }
+
 .my-custom-text {
     color: var(--theme-color);
 }
+
 .greeting {
     font-size: 2rem;
     font-weight: var(--lwc-fontWeightRegular, 400);
 }
+
 .record-row {
     display: flex;
     align-items: last baseline;

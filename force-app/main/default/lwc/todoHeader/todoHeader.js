@@ -8,16 +8,21 @@ import TO_DO_PRIORITY_FIELD from '@salesforce/schema/To_Do__c.Priority__c';
 import TO_DO_DUE_DATE_FIELD from '@salesforce/schema/To_Do__c.Due_Date__c';
 import TO_DO_DESCRIPTION_FIELD from '@salesforce/schema/To_Do__c.Description__c';
 
+import QouteGenerator from './quoteGenerator';
+
 const fields = [
   TO_DO_NAME_FIELD, TO_DO_TYPE_FIELD, TO_DO_PRIORITY_FIELD, TO_DO_DUE_DATE_FIELD, TO_DO_DESCRIPTION_FIELD
 ];
 
-const fieldApiNames = fields.map((arr)=>arr.fieldApiName);
+const fieldApiNames = fields.map((arr)=>arr.fieldApiName); // array of field api names
 
 export default class TodoHeader extends LightningElement { 
   greeting = "Good Morning";
   time = "9:00 AM";
   objectApiName = TO_DO_OBJECT;
+  quote;
+
+  quoteGenerator = new QouteGenerator();
 
   Name; Type; Priority; Due_Date; Description;
   
@@ -26,6 +31,9 @@ export default class TodoHeader extends LightningElement {
   @api flexipageRegionWidth;
 
   connectedCallback(){
+    this.setRandomQuote(); // set the quote of the day
+
+    // assigning the field api names
     [this.Name, this.Type, this.Priority, this.Due_Date, this.Description] = fieldApiNames;
     let seconds = this.getTime();
     
@@ -88,6 +96,11 @@ export default class TodoHeader extends LightningElement {
       : "6";
   }
 
+  // method to set random quote of the day.
+  setRandomQuote(){
+    this.quote = this.quoteGenerator.getRandomQuote();
+  }
+
   //* actions to perform when To-Do record is submitted
   handleSubmit(event){
     event.preventDefault();  // stop the form from submitting
@@ -103,11 +116,7 @@ export default class TodoHeader extends LightningElement {
     const newRecordId = newRecord.id;
     console.log('onsuccess: ', newRecordId);
 
-    const toastMessage = `To-Do Id: ${newRecordId},
-    Name: ${newRecord.fields.Name.value},
-    Due Date: ${newRecord.fields.Due_Date__c.displayValue},
-    Priority: ${newRecord.fields.Priority__c.value}
-    `
+    const toastMessage = `${newRecord.fields.Name.value} To-Do Task created.`
     console.log(toastMessage);
     // Delay the execution of ShowToastEvent with a timeout
     // This modification adds a small delay (0 milliseconds) using setTimeout. This is a common technique in JavaScript
