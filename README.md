@@ -14,6 +14,8 @@ Welcome to the To-Do Manager Project, a versatile and intuitive solution for man
 - Integrates an external JavaScript module to fetch and display a random quote for daily inspiration.
 - Features a `lightning-record-edit-form` for creating new To-Do Task records effortlessly.
 
+![todoHeader Component](https://github.com/khushal-ganani/todo-list/assets/152521234/9f721328-1220-4077-a636-fe0e8b6980a7)
+
 ### `todoCard` Component 🗂️
 
 - Presents To-Do tasks in a visually appealing card format.
@@ -31,6 +33,8 @@ Welcome to the To-Do Manager Project, a versatile and intuitive solution for man
 - Utilizes an Apex controller to fetch data dynamically based on filters, page size, and page number.
 - Ensures responsiveness across various devices using `@flexipageRegionWidth` property and `@salesforce/client/formFactor` module.
 
+![todoFilter & todoCardList Components](https://github.com/khushal-ganani/todo-list/assets/152521234/dc034505-95c1-49bb-83c1-1f7bd258c013)
+
 ### 5. `paginator` Component 📄
 
 - Integrates as a child component in `todoCardList` for easy navigation between pages.
@@ -45,6 +49,12 @@ Welcome to the To-Do Manager Project, a versatile and intuitive solution for man
 ### 7. Comprehensive Testing
 
 - The Apex controllers and wrapper classes are tested using Apex test classes, achieving 100% code coverage. This reflects my dedication to delivering robust and reliable solutions.
+
+
+
+https://github.com/khushal-ganani/todo-list/assets/152521234/58141e72-5966-421d-bebf-2520bc240fb4
+
+
 
 ## Technologies and Best Practices
 
@@ -61,6 +71,34 @@ The To-Do Manager Project is a testament to effective task management with a ble
 
 Thank you for taking the time to explore the To-Do Manager Project. For any feedbacks or discussions, please feel free to reach out.
 
+## Contact 📬
+
+*Connect with me on social media:*
+- LinkedIn:  [`www.linkedin.com/in/your-linkedin`](www.linkedin.com/in/khushal-ganani)
+- Email:     [`khushal.ganani@gmail.com`](mailto:khushal.ganani@example.com)
+- Trailhead: [`Trailhead Profile`](https://www.salesforce.com/trailblazer/khushalg)
+  
+## Project Videos
+
+### To-Do Project Video (Desktop) :
+
+
+
+https://github.com/khushal-ganani/todo-list/assets/152521234/32e829c1-7559-4660-9557-4a2337cbcf17
+
+
+
+
+### To-Do Project Video (Mobile) :
+
+
+
+https://github.com/khushal-ganani/todo-list/assets/152521234/9e129b1b-973d-42e3-98ce-9c75d08e5947
+
+
+
+
+
 ## Getting Started
 
 To set up and run the project locally, follow these steps:
@@ -71,10 +109,3 @@ git clone https://github.com/khushal-ganani/todo-list.git
 ```
 
 2. Deploy the project to your Salesforce environment using your preferred deployment tool or Salesforce CLI.
-
-## Contact 📬
-
-*Connect with me on social media:*
-- LinkedIn:  [`www.linkedin.com/in/your-linkedin`](www.linkedin.com/in/khushal-ganani)
-- Email:     [`khushal.ganani@gmail.com`](mailto:khushal.ganani@example.com)
-- Trailhead: [`Trailhead Profile`](https://www.salesforce.com/trailblazer/khushalg)
