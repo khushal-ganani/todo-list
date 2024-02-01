@@ -1,4 +1,4 @@
-public with sharing class TodoTriggerHandler extends TriggerHandler {
+public class TodoTriggerHandler extends TriggerHandler {
 
     protected override void afterInsert() {
         // Call the future method for making Google Tasks API call to insert the Google Tasks
@@ -24,55 +24,31 @@ public with sharing class TodoTriggerHandler extends TriggerHandler {
             // Call the future method for making Google Tasks API call to update the Google Tasks
             deleteGoogleTasks(googleTaskDetailsMap); 
         }
-        
     }
 
+    // future method to make callout to Google Tasks API to insert a Google Task
     @future(callout=true)
     public static void insertGoogleTasks(List<Id> todoIds) {
 
         // Query necessary information based on Ids
-        List<To_Do__c> todoList = [SELECT Id, Name, Type__c, Priority__c, Description__c, Due_Date__c, Completed__c,
+        List<To_Do__c> todoList = [SELECT Id, Name, Type__c, Description__c, Due_Date__c, Completed__c,
                                     Completed_On__c, Google_Task_Id__c FROM To_Do__c WHERE Id = :todoIds];
 
         // Make the callout using the retrieved data
         for (To_Do__c todo : todoList) {
-            
-            GoogleTasksJSON taskObject = new GoogleTasksJSON();
             Http http = new Http();
-            HttpRequest request = new HttpRequest();
+            HttpRequest request = getHttpRequest(todo, TriggerOperation.AFTER_INSERT);
 
-            String taskListId = getGoogleTaskListId(todo.Type__c);
-
-            taskObject.kind = 'tasks#task';
-            taskObject.title = todo.Name;
-            taskObject.notes = todo.Description__c;
-            taskObject.status = getStatus(todo.Completed__c);
-            taskObject.due = JSON.serialize(todo.Due_Date__c).replace('"', '');
-            taskObject.deleted = false;
-            taskObject.hidden = false;
-            if (todo.Completed__c && todo.Completed_On__c != null) {
-                taskObject.completed = JSON.serialize(todo.Completed__c).replace('"', '');
-            }
-
-            String body = JSON.serialize(taskObject, true);
-
-            request.setHeader('Accept', 'application/json');
-            request.setHeader('Content-Type', 'application/json');
-            request.setBody(body);
-            request.setTimeout(12000);
-            request.setMethod('POST');
-            request.setEndpoint('callout:googleTasks/tasks/v1/lists/' + taskListId + '/tasks');
-            
             HttpResponse jsonResponse = http.send(request);
             String responseBody = jsonResponse.getBody();
 
             GoogleTasksJSON response = GoogleTasksJSON.parse(responseBody);
 
             if (jsonResponse.getStatusCode() == 200) {
-                System.debug('response from Google Tasks API: ' + response);
+                System.debug('response from Google Tasks API: ' + responseBody);
                 todo.Google_Task_Id__c = response.id;
             } else {
-                System.debug('Error occured in the callout: ' + response);
+                System.debug('Error occured in the callout: ' + responseBody);
             }
         }
 
@@ -90,59 +66,32 @@ public with sharing class TodoTriggerHandler extends TriggerHandler {
         }
     }
 
+    // future method to make callout to Google Tasks API to update a Google Task
     @future(callout=true)
     public static void updateGoogleTasks(List<Id> todoIds) {
 
         // Query necessary information based on Ids
-        List<To_Do__c> todoList = [SELECT Id, Name, Type__c, Priority__c, Description__c, Due_Date__c, Completed__c,
+        List<To_Do__c> todoList = [SELECT Id, Name, Type__c, Description__c, Due_Date__c, Completed__c,
                                     Completed_On__c, Google_Task_Id__c FROM To_Do__c WHERE Id IN :todoIds];
 
         // Make the callout using the retrieved data
         for (To_Do__c todo : todoList) {
-            
-            GoogleTasksJSON taskObject = new GoogleTasksJSON();
             Http http = new Http();
-            HttpRequest request = new HttpRequest();
+            HttpRequest request = getHttpRequest(todo, TriggerOperation.AFTER_UPDATE);
 
-            String taskListId = getGoogleTaskListId(todo.Type__c);
-
-            taskObject.kind = 'tasks#task';
-            taskObject.title = todo.Name;
-            taskObject.notes = todo.Description__c;
-            taskObject.status = getStatus(todo.Completed__c);
-            taskObject.due = JSON.serialize(todo.Due_Date__c).replace('"', '');
-            taskObject.deleted = false;
-            taskObject.hidden = false;
-            if (todo.Completed__c && todo.Completed_On__c != null) {
-                taskObject.completed = JSON.serialize(todo.Completed__c).replace('"', '');
-            }
-
-            String body = JSON.serialize(taskObject, true);
-
-            request.setHeader('Accept', 'application/json');
-            request.setHeader('Content-Type', 'application/json');
-            request.setBody(body);
-            request.setTimeout(12000);
-            request.setMethod('PATCH');
-            request.setEndpoint('callout:googleTasks/tasks/v1/lists/' + taskListId + '/tasks/' + todo.Google_Task_Id__c);
-            
             HttpResponse jsonResponse = http.send(request);
             String responseBody = jsonResponse.getBody();
 
-            GoogleTasksJSON response = GoogleTasksJSON.parse(responseBody);
-
             if (jsonResponse.getStatusCode() == 200) {
-                System.debug('response from Google Tasks API to update Google Task: ' + response);
+                System.debug('response from Google Tasks API to update Google Task: ' + responseBody);
             } else {
-                System.debug('Error occured in the callout to update Google Task: ' + response);
+                System.debug('Error occured in the callout to update Google Task: ' + responseBody);
             }
         }
     }
 
     @future(callout = true)
     public static void deleteGoogleTasks(Map<String, String> googleTaskDetailsMap) {
-
-        System.debug('Entered the deleteGoogleTasks @future method');
 
         // make callouts for each record that is being deleted
         for (String googleTaskId : googleTaskDetailsMap.keySet()) {
@@ -153,8 +102,9 @@ public with sharing class TodoTriggerHandler extends TriggerHandler {
             request.setHeader('Accept', 'application/json');
             request.setMethod('DELETE');
             request.setTimeout(12000);
+
+            // DELETE https://tasks.googleapis.com/tasks/v1/lists/{tasklist}/tasks/{task}
             request.setEndpoint('callout:googleTasks/tasks/v1/lists/' + googleTaskDetailsMap.get(googleTaskId) + '/tasks/' + googleTaskId);
-            System.debug('Endpoint URL for DELETE request: '+request.getEndpoint());
 
             HttpResponse jsonResponse = http.send(request);
             System.debug('Status code from DELETE request to Google Tasks API is: '+jsonResponse.getStatusCode());
@@ -169,6 +119,56 @@ public with sharing class TodoTriggerHandler extends TriggerHandler {
         }
     }
 
+    /**
+    * Method to create and return the HttpRequest object for the Insert and Update Trigger Callouts.
+    */
+    static HttpRequest getHttpRequest(To_Do__c todo, TriggerOperation operation) {
+
+        HttpRequest request = new HttpRequest();
+
+        if (operation == TriggerOperation.AFTER_INSERT || operation == TriggerOperation.AFTER_UPDATE) {
+            GoogleTasksJSON taskObject = new GoogleTasksJSON();
+
+            String taskListId = getGoogleTaskListId(todo.Type__c);
+    
+            // constructing the JSON body using the GoogleTasksJSON Wrapper class for the HttpRequest Object.
+            taskObject.kind = 'tasks#task';
+            taskObject.title = todo.Name;
+            taskObject.notes = todo.Description__c;
+            taskObject.status = getStatus(todo.Completed__c);
+            // JSON.deserialize() method to convert the due date(Datetime type) in a String in the RFC 3339 timestamp format.
+            taskObject.due = JSON.serialize(todo.Due_Date__c).replace('"', '');
+            taskObject.deleted = false;
+            taskObject.hidden = false;
+            if (todo.Completed__c && todo.Completed_On__c != null) {
+                //JSON.deserialize() method to convert the due date(Datetime type) in a String in the RFC 3339 timestamp format.
+                taskObject.completed = JSON.serialize(todo.Completed__c).replace('"', '');
+            }
+            String body = JSON.serialize(taskObject, true);
+    
+            // assigning different properties of HttpRequest Object
+            request.setHeader('Accept', 'application/json');
+            request.setHeader('Content-Type', 'application/json');
+            request.setBody(body);
+            request.setTimeout(12000);
+    
+            // assigning different properties of HttpRequest based on type of TriggerOperation
+            if (operation == TriggerOperation.AFTER_INSERT) {
+                // POST https://tasks.googleapis.com/tasks/v1/lists/{tasklist}/tasks
+                request.setMethod('POST');
+                request.setEndpoint('callout:googleTasks/tasks/v1/lists/' + taskListId + '/tasks');
+            } else if (operation == TriggerOperation.AFTER_UPDATE) {
+                // PATCH https://tasks.googleapis.com/tasks/v1/lists/{tasklist}/tasks/{task}
+                request.setMethod('PATCH');
+                request.setEndpoint('callout:googleTasks/tasks/v1/lists/' + taskListId + '/tasks/' + todo.Google_Task_Id__c);
+            }
+        }
+        return request;
+    }
+
+    /**
+     * Method to return a List of Id of the To-Do object record List passed as argument
+     */ 
     static List<Id> getRecordIds(List<To_Do__c> todos) {
         List<Id> recordIds = new List<Id>();
         for (To_Do__c todo : todos) {
@@ -177,6 +177,10 @@ public with sharing class TodoTriggerHandler extends TriggerHandler {
         return recordIds;
     }
 
+    /**
+     * Method to return value of status property of the GoogleTaskJSON Wrapper class object based
+     * on the value of Completed__c (Boolean) field in the To-Do object
+     */
     static String getStatus(Boolean completed){
         String status;
         if(!completed){
@@ -187,6 +191,11 @@ public with sharing class TodoTriggerHandler extends TriggerHandler {
         return status;
     }
 
+    /**
+     * Method to return Google TaskList Id to be used in the Endpoint URL based on the Type__c field of the To-Do Object.
+     * Google TaskList Id is a unique identifier for a Task List on the Google Tasks App which is required in the
+     * Endpoint URL.
+     */
     static String getGoogleTaskListId(String type) {
         String taskListId;
         if (type == 'Self'+'-'+'Improvement') {
@@ -223,5 +232,6 @@ public with sharing class TodoTriggerHandler extends TriggerHandler {
             }
         }    
         return taskListId;
-    }    
+    }
 }
+
