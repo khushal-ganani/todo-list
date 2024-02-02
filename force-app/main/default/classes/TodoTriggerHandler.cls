@@ -142,7 +142,11 @@ public class TodoTriggerHandler extends TriggerHandler {
             taskObject.hidden = false;
             if (todo.Completed__c && todo.Completed_On__c != null) {
                 //JSON.deserialize() method to convert the due date(Datetime type) in a String in the RFC 3339 timestamp format.
+<<<<<<< HEAD
                 taskObject.completed = JSON.serialize(todo.Completed_On__c).replace('"', '');
+=======
+                taskObject.completed = JSON.serialize(todo.Completed__c).replace('"', '');
+>>>>>>> de0f05757d4ddbd931e7de70fefd7fc7aa1ad1b3
             }
             String body = JSON.serialize(taskObject, true);
     
