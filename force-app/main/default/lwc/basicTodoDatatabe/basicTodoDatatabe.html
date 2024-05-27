@@ -1,0 +1,36 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <lightning-card icon-name="utility:task" variant="base">
+        <div slot="title">
+            To-Do's
+        </div>
+        <div slot="actions">
+            <lightning-button 
+                variant="brand"
+                label="Refresh" 
+                title="Refresh the data" 
+                type="button"
+                onclick={handleRefresh} 
+            ></lightning-button>
+        </div>
+        <div slot="footer">
+            <c-paginator
+                page-number={pageNumber}
+                page-size=10
+                total-item-count = 59
+                onprevious={handlePreviousPage}
+                onnext={handleNextPage}
+            ></c-paginator>
+        </div>
+        <div class="slds-var-m-around_medium">
+            <div>
+                <lightning-datatable
+                    key-field="id"
+                    columns={columns}
+                    data={todos}
+                    hide-checkbox-column
+                ></lightning-datatable>
+            </div>
+        </div>
+    </lightning-card>
+</template>

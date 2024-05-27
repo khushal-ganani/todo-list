@@ -57,4 +57,32 @@ public with sharing class TodoController {
         );
         return result;
     }
+
+    
+    @AuraEnabled(cacheable = true)
+    public static List<To_Do__c> getDatatableTodos(Integer pageNumber) {
+        
+        Integer offset = (pageNumber - 1) * 10;
+        return [
+            SELECT Id, Name, Type__c, Priority__c, Due_Date__c, Description__c, Completed__c
+            FROM To_Do__c ORDER BY Name LIMIT 10 OFFSET :offset
+        ];
+    }
+
+    @AuraEnabled
+    public static string updateTodos(Object updatedData){
+        System.debug('Inside updateContacts method');
+
+        List<To_Do__c> updatedTodos = (List<To_Do__c>)JSON.deserialize(
+            JSON.serialize(updatedData, true), 
+            List<To_Do__c>.class
+        );
+        try {
+            update updatedTodos;
+            System.debug('Successfully updated the Todos!!');
+            return 'Success: Todo(s) updated successfully';
+        } catch (Exception e) {
+            return 'The following exception has occurred: ' + e.getMessage();
+        }
+    }
 }

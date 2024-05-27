@@ -19,15 +19,15 @@ export default class TodoCardList extends LightningElement {
 
     /** The number of items on a page. */
     pageSize = this.getPageSize();
-
+          
     /** The total number of items matching the selection. */
-    totalItemCount = 0;
+    totalItemCount = 0;  
 
     /** JSON.stringified version of filters to pass to apex */
     filters = {
         sortBy: "Due_Date__c ASC"
     };
-
+ 
     /** Load context for Lightning Messaging Service */
     @wire(MessageContext) messageContext;
 
