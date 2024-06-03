@@ -1,0 +1,7 @@
+:host {
+    --theme-color: #7846C1;
+}
+
+.theme-text {
+    color: var(--theme-color);
+}

@@ -16,7 +16,7 @@ const fields = [
 
 const fieldApiNames = fields.map((arr)=>arr.fieldApiName); // array of field api names
 
-export default class TodoHeader extends LightningElement { 
+export default class TodoHeader extends LightningElement {
   greeting = "Good Morning";
   time = "9:00 AM";
   objectApiName = TO_DO_OBJECT;
@@ -33,7 +33,7 @@ export default class TodoHeader extends LightningElement {
   connectedCallback(){
     this.setRandomQuote(); // set the quote of the day
 
-    // assigning the field api names
+    // assigning the field api names using ES6 spread operator
     [this.Name, this.Type, this.Priority, this.Due_Date, this.Description] = fieldApiNames;
     let seconds = this.getTime();
     
