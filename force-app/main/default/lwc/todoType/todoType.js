@@ -4,13 +4,12 @@ export default class CustomCellTodoType extends LightningElement {
     label;
     iconName;
 
-
     @api
-    get todoType(){
+    get value(){
         return this.label;
     }
 
-    set todoType(value){
+    set value(value){
         this.label = value;
         this.iconName = this.getIconName(value);
     }

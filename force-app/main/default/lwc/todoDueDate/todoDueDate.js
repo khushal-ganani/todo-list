@@ -1,14 +1,14 @@
 import { LightningElement, api } from 'lwc';
 
 export default class CustomCellTodoDueDate extends LightningElement {
-    label;
+    label = 'no value found!';
 
     @api
-    get todoDueDate(){
+    get value(){
         return this.label;
     }
 
-    set todoDueDate(value){
+    set value(value){
         this.label = this.formatDueDate(value);
     }
 
