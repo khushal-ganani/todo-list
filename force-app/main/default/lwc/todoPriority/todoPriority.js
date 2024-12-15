@@ -6,11 +6,11 @@ export default class CustomCellTodoPriority extends LightningElement {
     priorityBadgeColor;
 
     @api
-    get todoPriority() {
+    get value() {
         return this.label;
     }
 
-    set todoPriority(value) {
+    set value(value) {
         this.label = value;
         this.priorityBadgeColor = this.getPriorityBadgeColor(value);
     }
