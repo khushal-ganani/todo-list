@@ -57,4 +57,18 @@ public with sharing class TodoController {
         );
         return result;
     }
+
+    @AuraEnabled
+    public static string updateTodos(Object updatedData){
+        List<To_Do__c> updatedTodos = (List<To_Do__c>)JSON.deserialize(
+            JSON.serialize(updatedData, true), 
+            List<To_Do__c>.class
+        );
+        try {
+            update updatedTodos;
+            return 'Success: Todo(s) updated successfully';
+        } catch (Exception e) {
+            return 'The following exception has occurred: ' + e.getMessage();
+        }
+    }
 }

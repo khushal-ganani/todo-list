@@ -1,9 +1,9 @@
-:host{
-    --theme-color : #7846C1;
+:host {
+    --theme-color: #7846C1;
     --theme-color-dark: #55318a;
     --theme-color-light: #eee2ff;
     --slds-c-card-height: 20rem;
-} 
+}
 
 .due-date-box {
     background-color: var(--theme-color-light);

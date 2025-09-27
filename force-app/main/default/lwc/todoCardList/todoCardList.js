@@ -1,9 +1,5 @@
 import { LightningElement, wire, api } from 'lwc';
 
-// Lightning Message Service and message channels
-import { subscribe, MessageContext } from 'lightning/messageService';
-import TODOS_FILTERED_MESSAGE from '@salesforce/messageChannel/TodosFiltered__c';
-
 //* getTodoData() method in ProductController Apex class
 import getTodoData from '@salesforce/apex/TodoController.getTodoData';
 
@@ -14,6 +10,20 @@ export default class TodoCardList extends LightningElement {
 
     @api flexipageRegionWidth;
 
+    set filters(value) {
+        this._filters = value;
+        this.pageNumber = 1;
+    }
+
+    @api
+    get filters() {
+        return this._filters;
+    }
+
+    _filters = {
+        sortBy: "Due_Date__c ASC"
+    };
+
     /** Current page in the todo list. */
     pageNumber = 1;
 
@@ -23,14 +33,6 @@ export default class TodoCardList extends LightningElement {
     /** The total number of items matching the selection. */
     totalItemCount = 0;
 
-    /** JSON.stringified version of filters to pass to apex */
-    filters = {
-        sortBy: "Due_Date__c ASC"
-    };
-
-    /** Load context for Lightning Messaging Service */
-    @wire(MessageContext) messageContext;
-
     /** Subscription for ProductsFiltered Lightning message */
     todoFilterSubscription;
 
@@ -39,28 +41,6 @@ export default class TodoCardList extends LightningElement {
      */
     @wire(getTodoData, { filters: '$filters', pageSize: '$pageSize', pageNumber: '$pageNumber' })
     todos
-
-    connectedCallback() {
-        console.log("connectedCallback called on todoCardList!!");
-        // Subscribe to ProductsFiltered message
-        this.todoFilterSubscription = subscribe(
-            this.messageContext,
-            TODOS_FILTERED_MESSAGE,
-            (message) => {
-                console.log("message from filterTodo Component through LMS: ", message);
-                this.handleFilterChange(message)
-            }
-        );
-    }
-
-    /**
-    * method to change the filters based on the message received from the filterTodo component
-    */
-    handleFilterChange(message) {
-        console.log("handleFilterChange() on todoCardFilter called with filter data as: ", message);
-        this.filters = { ...message.filters };
-        this.pageNumber = 1;
-    }
 
     handlePreviousPage() {
         this.pageNumber = this.pageNumber - 1;
@@ -88,13 +68,13 @@ export default class TodoCardList extends LightningElement {
     /** 
      * function to get pageSize to Limit the number of todo record data
      * displayed to make the app responsive
-     */ 
+     */
     @api
-    getPageSize(){
+    getPageSize() {
         return FORM_FACTOR === "Large"
-        ? 9
-        : FORM_FACTOR === "Medium"
-        ? 6
-        : 3;
+            ? 9
+            : FORM_FACTOR === "Medium"
+                ? 6
+                : 3;
     }
 }
