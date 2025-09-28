@@ -1,5 +1,6 @@
 public with sharing class TodoController {
-
+    @TestVisible private static final String TODOS_UPDATED = 'Success: Todo(s) updated successfully';
+    @TestVisible private static final String ERROR_ON_UPDATE = 'The following exception has occurred: ';
     public class Filters {
         @AuraEnabled
         public String searchKey { get; set; }
@@ -60,15 +61,15 @@ public with sharing class TodoController {
 
     @AuraEnabled
     public static string updateTodos(Object updatedData){
-        List<To_Do__c> updatedTodos = (List<To_Do__c>)JSON.deserialize(
-            JSON.serialize(updatedData, true), 
-            List<To_Do__c>.class
-        );
         try {
+            List<To_Do__c> updatedTodos = (List<To_Do__c>)JSON.deserialize(
+                JSON.serialize(updatedData, true), 
+                List<To_Do__c>.class
+            );
             update updatedTodos;
-            return 'Success: Todo(s) updated successfully';
+            return TODOS_UPDATED;
         } catch (Exception e) {
-            return 'The following exception has occurred: ' + e.getMessage();
+            return ERROR_ON_UPDATE + e.getMessage();
         }
     }
 }
