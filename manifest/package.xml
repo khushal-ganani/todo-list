@@ -11,6 +11,10 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>sketch3todolistappicontemplate</members>
+		<name>ContentAsset</name>
+	</types>
+	<types>
 		<members>ToDo_List_App</members>
 		<name>CustomApplication</name>
 	</types>
@@ -30,6 +34,7 @@
 	</types>
 	<types>
 		<members>To_Do_Manager</members>
+		<members>To_Do__c</members>
 		<name>CustomTab</name>
 	</types>
 	<types>
