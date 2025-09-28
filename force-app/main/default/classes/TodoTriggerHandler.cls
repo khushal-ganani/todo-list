@@ -234,4 +234,3 @@ public class TodoTriggerHandler extends TriggerHandler {
         return taskListId;
     }
 }
-

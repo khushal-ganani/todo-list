@@ -56,5 +56,9 @@
 		<members>TodosFiltered</members>
 		<name>LightningMessageChannel</name>
 	</types>
+	<types>
+		<members>To_Do_Manager_App</members>
+		<name>PermissionSet</name>
+	</types>
 	<version>64.0</version>
 </Package>
