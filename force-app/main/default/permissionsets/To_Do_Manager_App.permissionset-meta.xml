@@ -45,6 +45,10 @@
         <viewAllRecords>false</viewAllRecords>
     </objectPermissions>
     <tabSettings>
+        <tab>To_Do_Manager</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
+    <tabSettings>
         <tab>To_Do__c</tab>
         <visibility>Visible</visibility>
     </tabSettings>
