@@ -7,7 +7,9 @@
 		<members>TodoCardListData</members>
 		<members>TodoController</members>
 		<members>TodoTriggerHandler</members>
+		<members>TodoTriggerTests</members>
 		<members>TriggerHandler</members>
+		<members>TriggerHandler_Test</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
