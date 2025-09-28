@@ -15,13 +15,13 @@ export default class TodoCard extends LightningElement {
     completedState = false;
     priorityBadgeColor;
     iconName;
-    
+
     @api
-    get todo(){
+    get todo() {
         return this.toDoRecord;
     }
 
-    set todo(value){
+    set todo(value) {
         this.toDoRecord = value;
         this.recordId = value.Id;
         this.cardTitle = value.Name;
@@ -64,7 +64,7 @@ export default class TodoCard extends LightningElement {
                 return "utility:trending";
             case "Other":
                 return "utility:task";
-            
+
             default:
                 console.warn('Unexpected or undefined todo type:', type);
                 return "utility:task"; // Default icon for unexpected types
@@ -75,17 +75,17 @@ export default class TodoCard extends LightningElement {
     * method to dynamically return the background and text color of the badge based on the
     * priority of the to-do
     */
-    getPriorityBadgeColor(value){
+    getPriorityBadgeColor(value) {
         let colorBackground;
         let color;
         const priority = value;
-        if(priority === "High"){
+        if (priority === "High") {
             colorBackground = 'rgb(255, 200, 200)';
             color = 'red'
-        } else if(priority === "Medium"){
+        } else if (priority === "Medium") {
             colorBackground = 'rgb(255, 255, 181)';
             color = 'rgb(140, 140, 0)';
-        } else if(priority === "Low"){
+        } else if (priority === "Low") {
             colorBackground = 'rgb(181, 255, 181)';
             color = 'green';
         }
@@ -97,17 +97,11 @@ export default class TodoCard extends LightningElement {
      */
     async handleCompletion(event) {
         let completed;
-        console.log(event.target);
-        try{
-            console.log("entered handleCompletion");
+        try {
             completed = this.completedState;
             const recordInput = { fields: { Id: this.recordId, Completed__c: !completed } };
-
             const result = await updateRecord(recordInput)
-            console.log("result from updateRecord(): ",result);
-
             this.completedState = !completed;
-            console.log("completedState: ", this.completedState);
 
             this.dispatchEvent(
                 new ShowToastEvent({
@@ -116,7 +110,7 @@ export default class TodoCard extends LightningElement {
                     variant: 'success',
                 })
             );
-        } catch(error) {
+        } catch (error) {
             console.error('Error updating record: ', error.body.message);
             this.dispatchEvent(
                 new ShowToastEvent({

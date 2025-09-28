@@ -14,9 +14,9 @@ const fields = [
   TO_DO_NAME_FIELD, TO_DO_TYPE_FIELD, TO_DO_PRIORITY_FIELD, TO_DO_DUE_DATE_FIELD, TO_DO_DESCRIPTION_FIELD
 ];
 
-const fieldApiNames = fields.map((arr)=>arr.fieldApiName); // array of field api names
+const fieldApiNames = fields.map((arr) => arr.fieldApiName); // array of field api names
 
-export default class TodoHeader extends LightningElement { 
+export default class TodoHeader extends LightningElement {
   greeting = "Good Morning";
   time = "9:00 AM";
   objectApiName = TO_DO_OBJECT;
@@ -25,21 +25,21 @@ export default class TodoHeader extends LightningElement {
   quoteGenerator = new QouteGenerator();
 
   Name; Type; Priority; Due_Date; Description;
-  
+
   // standard public property to get component size
   // value can be SMALL, MEDIUM, LARGE based on current context
   @api flexipageRegionWidth;
 
-  connectedCallback(){
+  connectedCallback() {
     this.setRandomQuote(); // set the quote of the day
 
     // assigning the field api names
     [this.Name, this.Type, this.Priority, this.Due_Date, this.Description] = fieldApiNames;
     let seconds = this.getTime();
-    
+
     setInterval(() => {
       seconds = this.getTime();
-    }, (60-seconds));
+    }, (60 - seconds));
   }
 
   //* return greeting based on current hour
@@ -54,7 +54,7 @@ export default class TodoHeader extends LightningElement {
   }
 
   //* get time in the 12 hour format
-  getTime(){
+  getTime() {
     const date = new Date();
     const hour = date.getHours();
     const minute = date.getMinutes();
@@ -67,10 +67,10 @@ export default class TodoHeader extends LightningElement {
   }
 
   //* Convert 24 hours format to 12 hours format
-  getHour(hour){
-    if(hour == 0){
+  getHour(hour) {
+    if (hour == 0) {
       return 12;
-    } else if(hour > 12){
+    } else if (hour > 12) {
       return hour - 12;
     } else {
       return hour;
@@ -78,12 +78,12 @@ export default class TodoHeader extends LightningElement {
   }
 
   //* Convert single digit number of minutes to double digit minute number
-  getInDoubleDigits(minute){
+  getInDoubleDigits(minute) {
     return minute < 10 ? "0" + minute : minute;
   }
 
   //* return AM or PM based on time
-  getMidDay(hour){
+  getMidDay(hour) {
     return hour >= 12 ? "PM" : "AM"
   }
 
@@ -92,17 +92,17 @@ export default class TodoHeader extends LightningElement {
     return this.flexipageRegionWidth === "SMALL"
       ? "12"
       : this.flexipageRegionWidth === "MEDIUM"
-      ? "8"
-      : "6";
+        ? "8"
+        : "6";
   }
 
   // method to set random quote of the day.
-  setRandomQuote(){
+  setRandomQuote() {
     this.quote = this.quoteGenerator.getRandomQuote();
   }
 
   //* actions to perform when To-Do record is submitted
-  handleSubmit(event){
+  handleSubmit(event) {
     event.preventDefault();  // stop the form from submitting
     const fields = event.detail.fields;
     this.template.querySelector('lightning-record-edit-form').submit(fields);
@@ -111,13 +111,8 @@ export default class TodoHeader extends LightningElement {
   //* actions to perform when record is succesfully created
   handleSuccess(event) {
     const newRecord = event.detail;
-    console.log(event.detail);
-
-    const newRecordId = newRecord.id;
-    console.log('onsuccess: ', newRecordId);
 
     const toastMessage = `${newRecord.fields.Name.value} To-Do Task created.`
-    console.log(toastMessage);
     // Delay the execution of ShowToastEvent with a timeout
     // This modification adds a small delay (0 milliseconds) using setTimeout. This is a common technique in JavaScript
     // to allow the browser to finish its current execution cycle before proceeding with the specified function.

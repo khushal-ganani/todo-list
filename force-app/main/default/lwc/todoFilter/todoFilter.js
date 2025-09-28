@@ -53,8 +53,8 @@ export default class TodoFilter extends LightningElement {
         this.filters.searchKey = event.target.value;
         this.delayedFireFilterChangeEvent();
     }
-    
-    handleSortByChange(event){
+
+    handleSortByChange(event) {
         this.sortByValue = event.detail.value;
         this.filters.sortBy = event.detail.value;
 
@@ -65,13 +65,12 @@ export default class TodoFilter extends LightningElement {
 
 
     handleCheckboxChange(event) {
-        console.log("event.target.dataset of checkbox onclick event: ", event.target.dataset);
         if (!this.filters.priorities) {
             // Lazy initialize filters with all values initially set
             this.filters.priorities = this.priorities.data.values.map((item) => item.value);
             this.filters.types = this.types.data.values.map((item) => item.value);
         }
-        
+
         const value = event.target.dataset.value;
         const filterArray = this.filters[event.target.dataset.filter];
         if (event.target.checked) {
@@ -83,7 +82,6 @@ export default class TodoFilter extends LightningElement {
                 (item) => item !== value
             );
         }
-        console.log("filterArray is: ", filterArray);
 
         // Published To-DosFiltered message
         publish(this.messageContext, TODOS_FILTERED_MESSAGE, {

@@ -18,13 +18,11 @@ export default class TodoManager extends LightningElement {
     todoFilterSubscription;
 
     connectedCallback() {
-        console.log("connectedCallback called on todoManager!!");
         // Subscribe to ProductsFiltered message
         this.todoFilterSubscription = subscribe(
             this.messageContext,
             TODOS_FILTERED_MESSAGE,
             (message) => {
-                console.log("message from filterTodo Component through LMS: ", message);
                 this.handleFilterChange(message)
             }
         );
@@ -34,7 +32,6 @@ export default class TodoManager extends LightningElement {
     * method to change the filters based on the message received from the filterTodo component
     */
     handleFilterChange(message) {
-        console.log("handleFilterChange() on todoManager called with filter data as: ", message);
         this.filters = { ...message.filters };
     }
 }

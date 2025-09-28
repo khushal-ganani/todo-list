@@ -149,7 +149,6 @@ export default class CustomTodoDatatable extends LightningElement {
             this.todos = todos;
             this.error = undefined;
             this.isLoading = false;
-            console.log('data from wire in datatable: ', todos);
         } else if (result.error) {
             this.error = result.error;
             this.todos = undefined;
@@ -167,7 +166,6 @@ export default class CustomTodoDatatable extends LightningElement {
     }
 
     handlePageSizeChange(event) {
-        console.log(`setting pageSize to : ${event.detail.value}`);
         this.pageSize = event.detail.value;
         this.pageNumber = 1;
     }
@@ -175,7 +173,6 @@ export default class CustomTodoDatatable extends LightningElement {
     async handleSave(event) {
         this.isLoading = true;
         let updateDraftValues = event.detail.draftValues;
-        console.log('draft-values: ', updateDraftValues);
 
         // Prepare the record IDs for notifyRecordUpdateAvailable()
         const notifyChangeIds = updateDraftValues.map(row => { return { "recordId": row.Id } });
@@ -183,7 +180,6 @@ export default class CustomTodoDatatable extends LightningElement {
         try {
             // this.draftValues = [];
             const result = await updateTodos({ updatedData: updateDraftValues });
-            console.log('result from apex controller: ', result);
 
             const toastEvent = new ShowToastEvent({
                 title: 'Records Updated',
@@ -202,9 +198,8 @@ export default class CustomTodoDatatable extends LightningElement {
 
             this.draftValues = [];
             await refreshApex(this.wireResult);
-            console.log('refresh apex finished executing');
         } catch (error) {
-            console.log('InlineEditUsingApexController apex result error: ', error);
+            console.error('InlineEditUsingApexController apex result error: ', error);
             this.draftValues = updateDraftValues;
             this.dispatchEvent(
                 new ShowToastEvent({
