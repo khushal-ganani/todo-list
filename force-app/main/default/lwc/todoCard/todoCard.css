@@ -33,6 +33,8 @@
 
 .my-custom-text {
     color: var(--theme-color-dark);
+    word-wrap: break-word;
+    width: 100%;
 }
 
 .my-custom-header {
