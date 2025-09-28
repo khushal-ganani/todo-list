@@ -13,6 +13,10 @@
 		<name>ApexClass</name>
 	</types>
 	<types>
+		<members>TodoTrigger</members>
+		<name>ApexTrigger</name>
+	</types>
+	<types>
 		<members>sketch3todolistappicontemplate</members>
 		<name>ContentAsset</name>
 	</types>
