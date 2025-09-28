@@ -32,7 +32,9 @@
 
         <!-- description of the todo -->
         <template lwc:if={description}>
-          <p class="my-custom-text"><b>Description: </b> {description}</p>
+          <div class="slds-grid">
+            <p title={description} class="my-custom-text slds-col slds-truncate"><b>Description: </b> {description}</p>
+          </div>
         </template>
         <template lwc:else>
           <div class="slds-text-color_destructive slds-text-align_center"><p>❗ No description was provided for this To-Do</p></div>
@@ -49,6 +51,7 @@
           class="type-badge slds-var-m-around_xx-small"
         ></lightning-badge>
       </div>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Placeat, sint, ex porro officiis quibusdam accusantium sunt ipsam non, quia voluptates veniam laborum harum. Consequuntur alias, cupiditate quasi eveniet pariatur omnis.
     </template>
     <template lwc:else>
       <p>Loading some data...</p>
